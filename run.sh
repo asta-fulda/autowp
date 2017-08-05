@@ -2,6 +2,7 @@
 
 # Run a Wordpress-Environment
 
+./stop.sh
 printf "Creating runtime network...\n"
 docker network create runtime
 printf "Network created!\nCreating MYSQL-Container...\n"
