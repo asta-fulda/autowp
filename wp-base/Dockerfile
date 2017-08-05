@@ -39,11 +39,6 @@ ENV MYSQL_DATABASE=wordpress \
    MYSQL_HOST=wpdb \
    WP_PREFIX=wp_
 
-# Actual installation of Wordpress against a running db container
-# within a build_context network.
-#
-# Always use --allow-root, otherwise the commands will fail.
-RUN wp core download --path=/var/www/html --locale=$wp_locale --version=$wp_version --allow-root
 
 COPY init.sh /init.sh
 RUN chmod +x /init.sh

@@ -12,6 +12,14 @@ alias wp="wp --path=/var/www/html --allow-root"
 
 ### Configuration and Installation ###
 #
+
+# First check if wordpress is already downloaded
+# TOFIX - This check does not work with volumes
+if [ "$(ls -a /var/www/html | wc -l)" = 2 ]; then
+   printf "Wordpress files not found. Downloading...\n"
+   wp core download --locale=$WP_LOCALE --version=$WP_VERSION
+fi
+
 # Config creation
 # - Make sure the config is created -> overrides all changes at container reboot
 wp config create --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=$MYSQL_HOST --dbprefix=$WP_PREFIX --locale=$wp_locale
