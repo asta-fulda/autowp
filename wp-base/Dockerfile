@@ -37,11 +37,8 @@ ENV MYSQL_DATABASE=wordpress \
    MYSQL_HOST=wpdb \
    WP_PREFIX=wp_
 
-
-COPY init.sh /init.sh
-RUN chmod +x /init.sh
-
-RUN /init.sh
+COPY init /usr/local/bin
+RUN chmod +x /usr/local/bin/init
 COPY wp-base-entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/wp-base-entrypoint.sh
 
@@ -49,4 +46,12 @@ RUN mkdir /init
 
 # Defining plugins before the init script is called...
 RUN printf "active-directory-integration 1.1.8\n" >> /plugins.txt
+
+# Actual installation of Wordpress against a running db container
+# within a build_context network happens in the init.sh script
+# Clean up wp-config after build process, so we can assume that it
+# is not present.
+RUN init; \
+      echo "This is an image embedded wordpress." >> /var/www/html/embedded
+
 ENTRYPOINT ["wp-base-entrypoint.sh"]
