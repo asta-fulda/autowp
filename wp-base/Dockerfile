@@ -42,8 +42,11 @@ COPY init.sh /init.sh
 RUN chmod +x /init.sh
 
 RUN /init.sh
+COPY wp-base-entrypoint.sh /usr/local/bin
+RUN chmod +x /usr/local/bin/wp-base-entrypoint.sh
 
 RUN mkdir /init
 
 # Defining plugins before the init script is called...
 RUN printf "active-directory-integration 1.1.8\n" >> /plugins.txt
+ENTRYPOINT ["wp-base-entrypoint.sh"]
