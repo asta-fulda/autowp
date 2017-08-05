@@ -42,6 +42,26 @@ if [ ! -e "/var/www/html/wp-config.php" ]; then
    fi
 fi
 
+# Wordpress as a Volume
+# - If a wordpress is mounted to /var/www/html give the webserver permissions
+#   to access the whole installation, so changes can be applied over the web ui.
+# - If it's the embedded wordpress restrict access to the uplaods and cache
+#   folders, so system changes have to be done within the image definition.
+if mount | grep /var/www/html > /dev/null; then
+   printf "Wordpress Instance mounted. Granting permissions...\n"
+   chown -R www-data:www-data /var/www/html
+else
+   if [ ! -e "/var/www/html/wp-content/uploads" ]; then
+      mkdir "/var/www/html/wp-content/uploads"
+   fi
+   if [ ! -e "/var/www/html/wp-content/cache" ]; then
+      mkdir "/var/www/html/wp-content/cache"
+   fi
+   printf "Granting permissions only for uploads and cache.\n"
+   chown -R www-data:www-data /var/www/html/wp-content/uploads
+   chown -R www-data:www-data /var/www/html/wp-content/cache
+fi
+
 # This will either:
 # - 1 - run the installation process and create all tables in database
 # - 2 - Skip with a warning, if wp is already installed/found in database
