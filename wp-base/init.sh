@@ -46,11 +46,14 @@ fi
 # - 1 - run the installation process and create all tables in database
 # - 2 - Skip with a warning, if wp is already installed/found in database
 if [ ! $(wp core is-installed) ]; then
-   if [ -e /var/www/html/init/database.sql ]; then
-      wp db import /var/www/html/init/database.sql
-   else
-      wp core install --url=$WP_URL --title=$WP_TITLE --admin_user=$WP_ADMIN_USER --admin_password=$WP_ADMIN_PASS --admin_email=$WP_ADMIN_EMAIL --skip-email
+   printf "Wordpress is not installed. Taking actions...\n"
+   if [ -e /init/database.sql ]; then
+      printf "Found database for import in /init. Importing...\n"
+      wp db import /init/database.sql
    fi
+   # After a possible import of data the installation process has to be run
+   printf "Installing from ENV...\n"
+   wp core install --url=$WP_URL --title=$WP_TITLE --admin_user=$WP_ADMIN_USER --admin_password=$WP_ADMIN_PASSWORD --admin_email=$WP_ADMIN_EMAIL --skip-email
 else
    wp core update --version=$WP_BUILD_VERSION --locale=$WP_BUILD_LOCALE --force
    # Run the database update procedure in case the container got updated
