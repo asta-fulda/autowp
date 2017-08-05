@@ -52,6 +52,8 @@ RUN printf "active-directory-integration 1.1.8\n" >> /plugins.txt
 # Clean up wp-config after build process, so we can assume that it
 # is not present.
 RUN init; \
+      rm /var/www/html/wp-config.php; \
+      rm /init/wp-config.php; \
       echo "This is an image embedded wordpress." >> /var/www/html/embedded
 
 ENTRYPOINT ["wp-base-entrypoint.sh"]
