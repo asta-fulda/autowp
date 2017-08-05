@@ -138,7 +138,10 @@ wp plugin status
 #
 # Repair and Optimize the database on every startup to ensure 
 # an existing database will always be consistent and optimized
+printf "Starting database checks and repair tasks...\n"
 wp db repair
 wp db optimize
 # Final check of the database
 wp db check
+
+printf "Startup/Installation process complete."
