@@ -19,7 +19,6 @@ RUN set -ex; \
 	docker-php-ext-install mbstring; \
 	docker-php-ext-install curl
 
-ARG wp_plugins
 ARG wp_build_version=latest
 ARG wp_build_locale=en_US
 
@@ -44,4 +43,7 @@ RUN chmod +x /init.sh
 
 RUN /init.sh
 
-ENTRYPOINT ["/init.sh && apache2-foreground"]
+RUN mkdir /init
+
+# Defining plugins before the init script is called...
+RUN printf "active-directory-integration 1.1.8\n" >> /plugins.txt

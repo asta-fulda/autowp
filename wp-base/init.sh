@@ -89,26 +89,48 @@ fi
 # Recommended way is to define a specific version and to update it here if necessary
 # If you specify '--activate' option it will make sure the plugin will be
 # activated after installation
-
-if [ -e /var/www/html/init/plugins.txt ]; then
-   cat /var/www/html/init/plugins.txt |
-   while read plugin version; do
-      if [ ! $(wp plugin is-installed) ]; then
-         # Install new plugins and force an overwrite
-         # The '--force' option reinstalles (updates) all plugins 
-         wp plugin install $plugin --version=$version --activate
-      else
-         # Update present plugins that are persistet
-         # This is important if a plugin get's installed 
-         wp plugin update $plugin --version=$version
-      fi
-   done
+if [ -e "/init/plugins.txt" ]; then
+   printf "Found custom plugins in /init!\n"
+   echo "/init/plugins.txt" >> "/plugins.txt"
 fi
+if [ ! -e "/var/www/html/wp-config.php" ]; then
+   if [ -e "/var/www/html/plugins.txt" ]; then
+      printf "Found custom plugins in wordpress volume!\n"
+      echo "/var/www/html/plugins.txt" >> "/plugins.txt"
+   fi
+fi
+# General plugin installation of all defined plugins in the /plugins.txt
+# - If it's embedded it will install plugins into the image
+# - If it's a volume it will install new plugins or update existing ones
+# - All plugins not in the /plugins.txt are ignored and not managed right now
+printf "Installing plugins...\n"
+cat "/plugins.txt" |
+while read plugin version; do
+   if [ ! $(wp plugin is-installed $plugin) ]; then
+      # Install new plugins and force an overwrite
+      # The '--force' option reinstalls (updates) all plugins 
+      printf "Installing the plugin $plugin in version $version...\n"
+      wp plugin install $plugin --version=$version --activate
+   else
+      # Update present plugins that are persistet
+      # This is important if a plugin get's installed
+      printf "Updating the plugin $plugin to version $version...\n"
+      wp plugin update $plugin --version=$version
+   fi
+done
 
 # Output information of all installed plugins
+printf "Plugin installation done.\n\nCurrent status:\n"
 wp plugin status
 
+# < Plugins >
+# Define custom plugins for the specific wordpress instance here.
+
+# < / Plugins
+
 # < Theme >
+# Define how to install your theme. It will be backed
+# right into the container.
 
 # < / Theme >
 
