@@ -62,6 +62,7 @@ else
    chown -R www-data:www-data /var/www/html/wp-content/cache
 fi
 
+# Wordpress database installation
 # This will either:
 # - 1 - run the installation process and create all tables in database
 # - 2 - Skip with a warning, if wp is already installed/found in database
@@ -75,9 +76,10 @@ if [ ! $(wp core is-installed) ]; then
    printf "Installing from ENV...\n"
    wp core install --url=$WP_URL --title=$WP_TITLE --admin_user=$WP_ADMIN_USER --admin_password=$WP_ADMIN_PASSWORD --admin_email=$WP_ADMIN_EMAIL --skip-email
 else
-   wp core update --version=$WP_BUILD_VERSION --locale=$WP_BUILD_LOCALE --force
+   printf "Wordpress is installed. Updating from ENV...\n"
+   wp core update --version=$WP_VERSION --locale=$WP_LOCALE --force
    # Run the database update procedure in case the container got updated
-   # and the db is therefore outdated
+   printf "Updating database...\n"
    wp core update-db
 fi
 
