@@ -22,8 +22,26 @@ fi
 
 # Config creation
 # - Make sure the config is created -> overrides all changes at container reboot
-wp config create --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=$MYSQL_HOST --dbprefix=$WP_PREFIX --locale=$wp_locale
-# Make sure that the instance is installed
+# - If a config is mounted to the /init/ folder, it will be applied instead
+# - The generated config at boot time will be persistet within the /init/ folder
+#   if a volume is mounted there
+if [ ! -e "/var/www/html/wp-config.php" ]; then
+   printf "No config found in /var/www/html!\n"
+   if [ -e "/init/wp-config.php" ]; then
+      printf "Linking config from /init to /var/www/html\n"
+      ln -sf /init/wp-config.php /var/www/html/wp-config.php
+   else
+      printf "Creating from ENV...\n"
+      wp config create --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=$MYSQL_HOST --dbprefix=$WP_PREFIX --locale=$wp_locale --force
+      if mount | grep /init > /dev/null; then
+         mv /var/www/html/wp-config.php /init
+         printf "Persisted config to /init volume\n"
+         printf "Linking config from /init to /var/www/html\n"
+         ln -sf /init/wp-config.php /var/www/html/wp-config.php
+      fi
+   fi
+fi
+
 # This will either:
 # - 1 - run the installation process and create all tables in database
 # - 2 - Skip with a warning, if wp is already installed/found in database
