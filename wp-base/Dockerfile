@@ -19,13 +19,12 @@ RUN set -ex; \
 	docker-php-ext-install mbstring; \
 	docker-php-ext-install curl
 
-ARG wp_version=latest
-ARG wp_locale=en_US
 ARG wp_plugins
+ARG wp_build_version=latest
+ARG wp_build_locale=en_US
 
-ENV WP_BUILD_VERSION=wp_version \
-   WP_BUILD_LOCALE=wp_locale \
-   WP_BUILD_PLUGINS=wp_plugins
+ENV WP_VERSION="${wp_build_version}" \
+   WP_LOCALE="${wp_build_locale}"
 
 ENV WP_URL=localhost \
    WP_TITLE=Wordpress \
