@@ -25,20 +25,24 @@ fi
 # - If a config is mounted to the /init/ folder, it will be applied instead
 # - The generated config at boot time will be persistet within the /init/ folder
 #   if a volume is mounted there
-if [ ! -e "/var/www/html/wp-config.php" ]; then
-   printf "No config found in /var/www/html!\n"
+if mount | grep "\</var/www/html\>" > /dev/null; then
+   # full wordpress instance is mounted
+   if [ -e "/var/www/html/wp-config.php" ]; then
+      printf "Config found. Using unmanaged custom config.\n"
+   else
+      printf "No config found in /var/www/html!\n"
+      printf "Creating config from ENV...\n"
+      wp config create --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=$MYSQL_HOST --dbprefix=$WP_PREFIX --locale=$wp_locale
+   fi
+else
+   # embedded managed version is used
+   printf "Checking for custom wp-config in /init volume...\n"
    if [ -e "/init/wp-config.php" ]; then
-      printf "Linking config from /init to /var/www/html\n"
+      printf "Found! Linking config from /init to /var/www/html\n"
       ln -sf /init/wp-config.php /var/www/html/wp-config.php
    else
-      printf "Creating from ENV...\n"
+      printf "Creating config from ENV...\n"
       wp config create --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=$MYSQL_HOST --dbprefix=$WP_PREFIX --locale=$wp_locale --force
-      if mount | grep "\</init\>" > /dev/null; then
-         mv /var/www/html/wp-config.php /init
-         printf "Persisted config to /init volume\n"
-         printf "Linking config from /init to /var/www/html\n"
-         ln -sf /init/wp-config.php /var/www/html/wp-config.php
-      fi
    fi
 fi
 
