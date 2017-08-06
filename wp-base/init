@@ -124,19 +124,8 @@ while read plugin version; do
 done
 
 # Output information of all installed plugins
-printf "Plugin installation done.\n\nCurrent status:\n"
+printf "Plugin maintenance done.\n\nCurrent status:\n"
 wp plugin status
-
-# < Plugins >
-# Define custom plugins for the specific wordpress instance here.
-
-# < / Plugins
-
-# < Theme >
-# Define how to install your theme. It will be backed
-# right into the container.
-
-# < / Theme >
 
 ### Database operations ###
 #

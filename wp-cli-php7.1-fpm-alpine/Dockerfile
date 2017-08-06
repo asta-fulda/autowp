@@ -1,4 +1,5 @@
 FROM php:7.1-fpm-alpine
+MAINTAINER AStA HS-Fulda <edv@asta.hs-fulda.org>
 
 # install the PHP extensions we need
 RUN set -ex; \
