@@ -47,7 +47,7 @@ fi
 #   to access the whole installation, so changes can be applied over the web ui.
 # - If it's the embedded wordpress restrict access to the uplaods and cache
 #   folders, so system changes have to be done within the image definition.
-if mount | grep /var/www/html > /dev/null; then
+if mount | grep "\</var/www/html\>" > /dev/null; then
    printf "Wordpress Instance mounted. Granting permissions...\n"
    chown -R www-data:www-data /var/www/html
 else
