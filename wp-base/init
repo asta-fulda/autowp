@@ -33,7 +33,7 @@ if [ ! -e "/var/www/html/wp-config.php" ]; then
    else
       printf "Creating from ENV...\n"
       wp config create --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=$MYSQL_HOST --dbprefix=$WP_PREFIX --locale=$wp_locale --force
-      if mount | grep /init > /dev/null; then
+      if mount | grep "\</init\>" > /dev/null; then
          mv /var/www/html/wp-config.php /init
          printf "Persisted config to /init volume\n"
          printf "Linking config from /init to /var/www/html\n"
