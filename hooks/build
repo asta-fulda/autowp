@@ -8,15 +8,15 @@ printf "Creating build_context network...\n"
 docker network create build_context
 printf "Done.\nCreating database container...\n"
 docker rm -f wpdb
-docker run --rm --name=wpdb --net build_context -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=wordpress -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=password -d mysql:5.6
+docker run --rm --name=wpdb --network build_context -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=wordpress -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=password -d mysql:5.6
 printf "Done.\nBuilding modified apache base image...\n"
 docker build -t astafulda/wp-cli wp-cli/
 #printf "Done.\nWaiting for the database container to become ready...\n"
 #sleep 30
 printf "Done.\nBuilding wordpress apache image...\n"
-docker build --net build_context -t astafulda/wp wp/
+docker build --network build_context -t astafulda/wp wp/
 printf "Done.\nBuilding wordpress base image...\n"
-docker build --net build_context -t astafulda/wp-base wp-base/
+docker build --network build_context -t astafulda/wp-base wp-base/
 printf "Done.\nStopping database container...\n"
 docker rm -f wpdb
 printf "Done.\nRemoving build_context network...\n"
