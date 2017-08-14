@@ -9,6 +9,8 @@ docker network create build_context
 printf "Done.\nCreating database container...\n"
 docker rm -f wpdb
 docker run --rm --name=wpdb --network build_context -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=wordpress -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=password -d mysql:5.6
+printf "Waiting for db to become ready...\n"
+sleep 60
 printf "Done.\nBuilding modified apache base image...\n"
 docker build -t astafulda/wp-cli wp-cli/
 #printf "Done.\nWaiting for the database container to become ready...\n"
